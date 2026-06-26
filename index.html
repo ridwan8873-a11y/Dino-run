@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rafka Airlines - Official Fan Club</title>
+    <style>
+        :root {
+            --primary: #003580; /* Biru Maskapai */
+            --secondary: #c5a065; /* Emas Premium */
+            --light: #f4f7f9;
+            --dark: #1a202c;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        
+        body { background-color: var(--light); color: var(--dark); line-height: 1.6; }
+
+        /* Header */
+        header { 
+            background: var(--primary); 
+            color: var(--white); 
+            padding: 1rem 5%; 
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .logo span { color: var(--secondary); }
+
+        /* Hero Section */
+        .hero {
+            height: 70vh;
+            background: linear-gradient(rgba(0,53,128,0.6), rgba(0,53,128,0.4)), 
+                        url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1600&q=80') center/cover no-repeat;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white; padding: 2rem;
+        }
+        .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1.3rem; max-width: 600px; margin-bottom: 2rem; opacity: 0.95; }
+        .btn-gold { 
+            background: var(--secondary); color: var(--primary); padding: 1rem 2.5rem; 
+            border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.1rem;
+            transition: all 0.3s; border: none; cursor: pointer;
+        }
+        .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(197,160,101,0.4); background: #d4b075; }
+
+        /* Gallery Section */
+        .gallery-section { max-width: 1200px; margin: 4rem auto; padding: 0 5%; }
+        .section-title { text-align: center; color: var(--primary); margin-bottom: 2rem; font-size: 2rem; position: relative; }
+        .section-title::after { 
+            content: ''; display: block; width: 60px; height: 3px; 
+            background: var(--secondary); margin: 10px auto 0; 
+        }
+        
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .gallery-card { 
+            background: white; border-radius: 12px; overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.3s;
+        }
+        .gallery-card:hover { transform: translateY(-5px); }
+        .gallery-card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-body { padding: 1.5rem; }
+        .card-body h3 { color: var(--primary); margin-bottom: 0.5rem; }
+        .card-body p { font-size: 0.9rem; color: #666; }
+
+        /* Join Form Section */
+        .join-section { 
+            background: var(--primary); padding: 4rem 5%; 
+            display: flex; justify-content: center; align-items: center;
+        }
+        .form-container { 
+            background: white; padding: 3rem; border-radius: 16px; 
+            max-width: 500px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .form-container h2 { color: var(--primary); margin-bottom: 0.5rem; }
+        .form-container p { color: #666; margin-bottom: 2rem; font-size: 0.95rem; }
+        
+        .input-group { position: relative; margin-bottom: 1.5rem; text-align: left; }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--dark); }
+        .input-group input { 
+            width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; 
+            font-size: 1rem; outline: none; transition: border-color 0.3s;
+        }
+        .input-group input:focus { border-color: var(--secondary); }
+
+        /* Modal Success */
+        .modal { 
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); 
+            justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
+        }
+        .modal-content { 
+            background: white; padding: 2.5rem; border-radius: 16px; text-align: center; 
+            max-width: 400px; width: 100%; animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .plane-icon { font-size: 4rem; margin-bottom: 1rem; display: block; }
+
+        /* Admin Panel */
+        .admin-panel { 
+            display: none; max-width: 800px; margin: 3rem auto; padding: 2rem; 
+            background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; padding-bottom: 1rem; }
+        .fan-list { list-style: none; }
+        .fan-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 1rem; border-bottom: 1px solid #f0f0f0; transition: background 0.2s;
+        }
+        .fan-item:hover { background: #f8fafc; }
+        .fan-name { font-weight: bold; color: var(--primary); font-size: 1.1rem; }
+        .fan-time { font-size: 0.8rem; color: #888; }
+        .empty-state { text-align: center; padding: 3rem; color: #aaa; font-style: italic; }
+
+        /* Floating Admin Button */
+        .floating-admin {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--dark); color: white; width: 50px; height: 50px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 999;
+            font-size: 1.2rem; transition: transform 0.2s;
+        }
+        .floating-admin:hover { transform: scale(1.1); }
+
+        footer { background: var(--dark); color: #888; text-align: center; padding: 2rem; font-size: 0.9rem; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .form-container { padding: 2rem; }
+            .gallery-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">✈️ Rafka <span>Airlines</span></div>
+    </header>
+
+    <section class="hero">
+        <h1>Terbang Bersama Kami</h1>
+        <p>Bergabunglah dengan komunitas penggemar Rafka Airlines. Dapatkan update rute terbaru, promo eksklusif, dan pengalaman terbang premium.</p>
+        <a href="#join" class="btn-gold">Gabung Fan Club</a>
+    </section>
+
+    <!-- GALERI ARMADA & FASILITAS -->
+    <section class="gallery-section">
+        <h2 class="section-title">Armada & Pengalaman Terbang</h2>
+        <div class="gallery-grid">
+            <div class="gallery-card">
+                <img src="https://images.unsplash.com/photo-1542296332-2e44a99cfef9?w=600&q=80" alt="Pesawat Rafka Airlines">
+                <div class="card-body">
+                    <h3>Armada Modern</h3>
+                    <p>Pesawat generasi terbaru dengan teknologi hemat bahan bakar dan kenyamanan maksimal.</p>
+                </div>
+            </div>
+            <div class="gallery-card">
+                <img src="https://images.unsplash.com/photo-1540339872892-4c5e72b510e2?w=600&q=80" alt="Kelas Bisnis">
+                <div class="card-body">
+                    <h3>Kelas Bisnis Premium</h3>
+                    <p>Kursi flat-bed, hidangan gourmet, dan layanan pramugari terbaik di kelasnya.</p>
+                </div>
+            </div>
+            <div class="gallery-card">
+                <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80" alt="Pemandangan Sayap">
+                <div class="card-body">
+                    <h3>Pemandangan Langit</h3>
+                    <p>Nikmati keindahan awan dan sunset dari ketinggian 35.000 kaki bersama kami.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FORMULIR FANS -->
+    <section id="join" class="join-section">
+        <div class="form-container">
+            <span class="plane-icon">🛫</span>
+            <h2>Jadilah Bagian dari Keluarga Rafka</h2>
+            <p>Cukup tuliskan namamu di bawah ini. Kami akan mencatat keanggotaanmu secara otomatis.</p>
+            
+            <form id="fanForm">
+                <div class="input-group">
+                    <label for="fanName">Nama Lengkap Fans *</label>
+                    <input type="text" id="fanName" required placeholder="Contoh: Budi Santoso" autocomplete="off">
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%;">Daftar Sekarang</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- MODAL SUKSES -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="plane-icon">✅</span>
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">Selamat Bergabung!</h2>
+            <p style="margin-bottom: 1.5rem;">Terima kasih telah menjadi fans Rafka Airlines. Namamu telah tercatat dalam database resmi kami.</p>
+            <button onclick="closeModal()" class="btn-gold" style="padding: 0.8rem 2rem; font-size: 1rem;">Tutup</button>
+        </div>
+    </div>
+
+    <!-- TOMBOL ADMIN MELAYANG -->
+    <div class="floating-admin" onclick="toggleAdmin()" title="Panel Admin">🔒</div>
+
+    <!-- PANEL ADMIN -->
+    <section id="adminPanel" class="admin-panel">
+        <div class="admin-header">
+            <h2 style="color: var(--primary);">📋 Daftar Fans Rafka Airlines</h2>
+            <button onclick="clearFans()" style="background: #e53e3e; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Hapus Semua Data</button>
+        </div>
+        <ul id="fanList" class="fan-list">
+            <!-- Data fans akan muncul di sini -->
+        </ul>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Rafka Airlines. All Rights Reserved.</p>
+        <p style="font-size: 0.75rem; margin-top: 0.5rem; opacity: 0.6;">Maskapai Fiksi untuk Tujuan Hiburan & Kreatif</p>
+    </footer>
+
+<script>
+    // --- LOGIKA FORM FANS ---
+    const fanForm = document.getElementById('fanForm');
+    const modal = document.getElementById('successModal');
+
+    fanForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const nameInput = document.getElementById('fanName');
+        const fanName = nameInput.value.trim();
+        
+        if (!fanName) return;
+
+        // Simpan data ke LocalStorage
+        const fans = JSON.parse(localStorage.getItem('rafka_fans') || '[]');
+        fans.push({
+            id: Date.now(),
+            name: fanName,
+            joinedAt: new Date().toLocaleString('id-ID', { 
+                day: 'numeric', month: 'long', year: 'numeric', 
+                hour: '2-digit', minute: '2-digit' 
+            })
+        });
+        localStorage.setItem('rafka_fans', JSON.stringify(fans));
+
+        // Tampilkan modal & reset form
+        modal.style.display = 'flex';
+        nameInput.value = '';
+        renderFanList();
+    });
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    // Tutup modal saat klik di luar konten
+    window.onclick = function(event) {
+        if (event.target === modal) closeModal();
+    }
+
+    // --- LOGIKA ADMIN PANEL ---
+    function toggleAdmin() {
+        const panel = document.getElementById('adminPanel');
+        if (panel.style.display === 'block') {
+            panel.style.display = 'none';
+        } else {
+            const password = prompt("Masukkan Password Admin Rafka Airlines:");
+            if (password === "rafka2024") {
+                panel.style.display = 'block';
+                renderFanList();
+                panel.scrollIntoView({ behavior: 'smooth' });
+            } else if (password !== null) {
+                alert("Password salah! Akses ditolak.");
+            }
+        }
+    }
+
+    function renderFanList() {
+        const listContainer = document.getElementById('fanList');
+        const fans = JSON.parse(localStorage.getItem('rafka_fans') || '[]');
+        
+        listContainer.innerHTML = '';
+        
+        if (fans.length === 0) {
+            listContainer.innerHTML = '<li class="empty-state">Belum ada fans yang mendaftar. Jadilah yang pertama! ✈️</li>';
+            return;
+        }
+
+        // Tampilkan fans terbaru di atas
+        [...fans].reverse().forEach(fan => {
+            const li = document.createElement('li');
+            li.className = 'fan-item';
+            li.innerHTML = `
+                <div>
+                    <div class="fan-name">👤 ${fan.name}</div>
+                    <div class="fan-time">Bergabung: ${fan.joinedAt}</div>
+                </div>
+                <button onclick="deleteFan(${fan.id})" style="background:none;border:none;color:#e53e3e;cursor:pointer;font-size:1.2rem;" title="Hapus fans ini">🗑️</button>
+            `;
+            listContainer.appendChild(li);
+        });
+    }
+
+    function deleteFan(id) {
+        if (confirm('Yakin ingin menghapus fans ini dari daftar?')) {
+            let fans = JSON.parse(localStorage.getItem('rafka_fans') || '[]');
+            fans = fans.filter(f => f.id !== id);
+            localStorage.setItem('rafka_fans', JSON.stringify(fans));
+            renderFanList();
+        }
+    }
+
+    function clearFans() {
+        if (confirm('PERINGATAN: Ini akan menghapus SEMUA data fans. Lanjutkan?')) {
+            localStorage.removeItem('rafka_fans');
+            renderFanList();
+        }
+    }
+
+    // Render daftar saat halaman dimuat (jika admin panel terbuka)
+    document.addEventListener('DOMContentLoaded', () => {
+        // Opsional: bisa tambahkan logika lain di sini
+    });
+</script>
+
+</body>
+</html>
